@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.ellivers.whyamionfire",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "mixin.EntityMixin"
+  ],
+  "client": [
+    "client.InGameOverlayRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
