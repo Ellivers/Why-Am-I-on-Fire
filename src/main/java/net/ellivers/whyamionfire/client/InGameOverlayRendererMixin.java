@@ -20,17 +20,14 @@ public class InGameOverlayRendererMixin {
     private static void renderFireOverlay(MinecraftClient minecraftClient, MatrixStack matrixStack, CallbackInfo ci) {
         ClientPlayerEntity player = minecraftClient.player;
         if (player != null) {
-            if (player.isCreative()) ci.cancel();
+            if (minecraftClient.options.hudHidden || player.isCreative()) ci.cancel();
             else if (player.hasStatusEffect(FIRE_RESISTANCE)) {
-                for (StatusEffectInstance effect : player.getStatusEffects()) {
-                    if (effect.getEffectType() == FIRE_RESISTANCE) {
-                        if (effect.getDuration() <= 200 || player.isHolding(MILK_BUCKET)) {
-                            if (effect.getDuration() % 20 < 10) ci.cancel();
-                        }
-                        else if (effect.getDuration() > 200) {
-                            ci.cancel();
-                        }
-                    }
+                StatusEffectInstance effect = player.getStatusEffect(FIRE_RESISTANCE);
+                assert effect != null;
+                if (effect.getDuration() <= 200 || player.isHolding(MILK_BUCKET)) {
+                    if (effect.getDuration() % 20 < 10) ci.cancel();
+                } else if (effect.getDuration() > 200) {
+                    ci.cancel();
                 }
             }
         }
