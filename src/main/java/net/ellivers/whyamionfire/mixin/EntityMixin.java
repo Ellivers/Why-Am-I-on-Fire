@@ -46,7 +46,7 @@ public abstract class EntityMixin {
             if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) isCreative = true;
 
             if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance && !isCreative
-                    && !(this.world.method_29556(this.getBoundingBox().contract(0.001D)).anyMatch((blockStatex)
+                    && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockStatex)
                                     -> blockStatex.isIn(BlockTags.FIRE) || blockStatex.isOf(Blocks.LAVA))
                                     && ((hasFireResistance && remainingDuration <= 200) || ((LivingEntity) (Object) this).isHolding(MILK_BUCKET))
                         )
