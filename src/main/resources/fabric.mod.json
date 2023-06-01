@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "whyamionfire",
-  "version": "1.2.0",
+  "version": "1.2.1",
 
   "name": "Why Am I on Fire?",
   "description": "Hides the obstructive fire overlay when it's not needed.",
@@ -28,7 +28,7 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.14.10",
-    "minecraft": ">=1.19.2"
+    "fabricloader": ">=0.14.21",
+    "minecraft": ">=1.19.4"
   }
 }

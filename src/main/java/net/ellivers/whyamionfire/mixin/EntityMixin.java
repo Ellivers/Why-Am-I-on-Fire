@@ -4,7 +4,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tag.BlockTags;
+
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,8 +47,8 @@ public abstract class EntityMixin {
             if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) isCreative = true;
 
             if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance && !isCreative
-                    && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockStatex)
-                                    -> blockStatex.isIn(BlockTags.FIRE) || blockStatex.isOf(Blocks.LAVA))
+                    && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockState)
+                                    -> blockState.isIn(BlockTags.FIRE) || blockState.isOf(Blocks.LAVA))
                                     && ((hasFireResistance && remainingDuration <= 200) || ((LivingEntity) (Object) this).isHolding(MILK_BUCKET))
                         )
             )
