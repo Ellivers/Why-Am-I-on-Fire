@@ -10,16 +10,17 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static net.ellivers.whyamionfire.WhyAmIOnFire.CLEARS_EFFECTS;
 import static net.minecraft.entity.effect.StatusEffects.FIRE_RESISTANCE;
-import static net.minecraft.item.Items.MILK_BUCKET;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @Shadow public World world;
+    @Shadow private World world;
 
     @Shadow public abstract Box getBoundingBox();
 
@@ -32,30 +33,41 @@ public abstract class EntityMixin {
 
     @Inject(method = "baseTick", at = @At("TAIL"))
     private void baseTick(CallbackInfo ci) {
-        extinguishIfResistantToFire();
+        if (((Entity) (Object) this).isOnFire()) extinguishIfResistantToFire();
     }
 
+    @Unique
     public void extinguishIfResistantToFire() {
         if (((Entity) (Object) this) instanceof LivingEntity) {
-            boolean isCreative = false;
+            if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) {
+                this.fireTicks = 0;
+                return;
+            }
+            if (!(((Entity) (Object) this) instanceof PlayerEntity)) {
+                this.fireTicks = 0;
+                return;
+            }
+
             boolean hasFireResistance = false;
             int remainingDuration = 0;
             if (((LivingEntity) (Object) this).hasStatusEffect(FIRE_RESISTANCE)) {
                 remainingDuration = ((LivingEntity) (Object) this).getStatusEffect(FIRE_RESISTANCE).getDuration();
                 hasFireResistance = true;
             }
-            if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) isCreative = true;
 
-            if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance && !isCreative
+            /* Extinguish the player if they have fire resistance and are on fire
+            * But, if the player is standing in something that will set them on fire and:
+            * their fire resistance is about to wear off, or
+            * they are holding a bucket of milk (which can remove the fire resistance),
+            * then don't extinguish the fire, as a warning.
+             */
+            if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance
                     && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockState)
                                     -> blockState.isIn(BlockTags.FIRE) || blockState.isOf(Blocks.LAVA))
-                                    && ((hasFireResistance && remainingDuration <= 200) || ((LivingEntity) (Object) this).isHolding(MILK_BUCKET))
+                                    && (remainingDuration <= 200 || ((LivingEntity) (Object) this).isHolding(item -> item.isIn(CLEARS_EFFECTS)))
                         )
             )
             {
-                this.fireTicks = 0;
-            }
-            else if (isCreative) {
                 this.fireTicks = 0;
             }
 

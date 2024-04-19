@@ -6,19 +6,20 @@ import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static net.ellivers.whyamionfire.WhyAmIOnFire.CLEARS_EFFECTS;
 import static net.minecraft.entity.effect.StatusEffects.FIRE_RESISTANCE;
-import static net.minecraft.item.Items.MILK_BUCKET;
 
 @Mixin(InGameOverlayRenderer.class)
 public class InGameOverlayRendererMixin {
 
+    @Unique
     private static boolean transparent;
 
     @Inject(method = "renderFireOverlay", cancellable = true, at = @At("HEAD"))
@@ -28,12 +29,11 @@ public class InGameOverlayRendererMixin {
         if (player != null) {
             if (minecraftClient.options.hudHidden || player.isCreative()) ci.cancel();
             else if (player.hasStatusEffect(FIRE_RESISTANCE)) {
-                StatusEffectInstance effect = player.getStatusEffect(FIRE_RESISTANCE);
-                assert effect != null;
-                if (effect.getDuration() <= 200 || player.isHolding(MILK_BUCKET)) {
+                int duration = player.getStatusEffect(FIRE_RESISTANCE).getDuration();
+                if (!ModConfig.partialHide.equals(ModConfig.PartialHide.NONE) && (duration <= 200 || player.isHolding(item -> item.isIn(CLEARS_EFFECTS)))) {
                     transparent = ModConfig.partialHide.equals(ModConfig.PartialHide.TRANSPARENT);
-                    if (!transparent && effect.getDuration() % 20 < 10) ci.cancel();
-                } else if (effect.getDuration() > 200) {
+                    if (!transparent && duration % 20 < 10) ci.cancel();
+                } else {
                     ci.cancel();
                 }
             }

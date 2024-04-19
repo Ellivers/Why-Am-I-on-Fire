@@ -1,7 +1,8 @@
 {
   "whyamionfire.midnightconfig.title": "Why Am I on Fire? config",
   "whyamionfire.midnightconfig.partialHide": "Warning display type",
-  "whyamionfire.midnightconfig.partialHide.tooltip": "Flash: Toggle the fire overlay every half second.\nTransparent: Show a transparent fire overlay.",
+  "whyamionfire.midnightconfig.partialHide.tooltip": "Flash: Toggle the fire overlay every half second.\nTransparent: Show a transparent fire overlay.\nNone: Do not warn.",
   "whyamionfire.midnightconfig.enum.PartialHide.FLASH": "Flash",
-  "whyamionfire.midnightconfig.enum.PartialHide.TRANSPARENT": "Transparent"
+  "whyamionfire.midnightconfig.enum.PartialHide.TRANSPARENT": "Transparent",
+  "whyamionfire.midnightconfig.enum.PartialHide.NONE": "None"
 }
