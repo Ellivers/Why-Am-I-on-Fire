@@ -1,5 +1,6 @@
 package net.ellivers.whyamionfire.mixin;
 
+import net.ellivers.whyamionfire.config.ModConfig;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -38,7 +39,7 @@ public abstract class EntityMixin {
 
     @Unique
     public void extinguishIfResistantToFire() {
-        if (((Entity) (Object) this) instanceof LivingEntity) {
+        if (ModConfig.extinguishMobs && ((Entity) (Object) this) instanceof LivingEntity) {
             if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) {
                 this.fireTicks = 0;
                 return;

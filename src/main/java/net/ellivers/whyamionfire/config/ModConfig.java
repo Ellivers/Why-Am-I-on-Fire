@@ -5,4 +5,5 @@ public class ModConfig extends MidnightConfig {
         FLASH, TRANSPARENT, NONE
     }
     @Entry public static PartialHide partialHide = PartialHide.FLASH;
+    @Entry public static boolean extinguishMobs = true;
 }

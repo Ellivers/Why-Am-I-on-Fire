@@ -4,5 +4,7 @@
   "whyamionfire.midnightconfig.partialHide.tooltip": "Flash: Toggle the fire overlay every half second.\nTransparent: Show a transparent fire overlay.\nNone: Do not warn.",
   "whyamionfire.midnightconfig.enum.PartialHide.FLASH": "Flash",
   "whyamionfire.midnightconfig.enum.PartialHide.TRANSPARENT": "Transparent",
-  "whyamionfire.midnightconfig.enum.PartialHide.NONE": "None"
+  "whyamionfire.midnightconfig.enum.PartialHide.NONE": "None",
+  "whyamionfire.midnightconfig.extinguishMobs": "Extinguish Mobs",
+  "whyamionfire.midnightconfig.extinguishMobs.tooltip": "(Server side)\nStops mobs and players that are immune to fire from being on fire. Players are set on fire again if the fire resistance effect is at risk of running out, in order to warn them."
 }
