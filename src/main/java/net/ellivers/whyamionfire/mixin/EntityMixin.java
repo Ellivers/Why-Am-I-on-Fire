@@ -44,16 +44,17 @@ public abstract class EntityMixin {
                 this.fireTicks = 0;
                 return;
             }
-            if (!(((Entity) (Object) this) instanceof PlayerEntity)) {
-                this.fireTicks = 0;
-                return;
-            }
 
             boolean hasFireResistance = false;
             int remainingDuration = 0;
             if (((LivingEntity) (Object) this).hasStatusEffect(FIRE_RESISTANCE)) {
                 remainingDuration = ((LivingEntity) (Object) this).getStatusEffect(FIRE_RESISTANCE).getDuration();
                 hasFireResistance = true;
+            }
+
+            if (!(((Entity) (Object) this) instanceof PlayerEntity) && hasFireResistance) {
+                this.fireTicks = 0;
+                return;
             }
 
             /* Extinguish the player if they have fire resistance and are on fire
