@@ -27,6 +27,8 @@ public abstract class EntityMixin {
 
     @Shadow private int fireTicks;
 
+    @Shadow public abstract boolean isOnFire();
+
     @Inject(method = "setFireTicks", at = @At("TAIL"))
     private void setFireTicks(int ticks, CallbackInfo ci) {
         extinguishIfResistantToFire();
@@ -34,25 +36,27 @@ public abstract class EntityMixin {
 
     @Inject(method = "baseTick", at = @At("TAIL"))
     private void baseTick(CallbackInfo ci) {
-        if (((Entity) (Object) this).isOnFire()) extinguishIfResistantToFire();
+        if (this.isOnFire()) extinguishIfResistantToFire();
     }
 
     @Unique
     public void extinguishIfResistantToFire() {
-        if (ModConfig.extinguishMobs && ((Entity) (Object) this) instanceof LivingEntity) {
-            if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) {
+        Entity entity = (Entity) (Object) this;
+
+        if (ModConfig.extinguishMobs && entity instanceof LivingEntity livingEntity) {
+            if (livingEntity instanceof PlayerEntity player && player.isCreative()) {
                 this.fireTicks = 0;
                 return;
             }
 
             boolean hasFireResistance = false;
             int remainingDuration = 0;
-            if (((LivingEntity) (Object) this).hasStatusEffect(FIRE_RESISTANCE)) {
-                remainingDuration = ((LivingEntity) (Object) this).getStatusEffect(FIRE_RESISTANCE).getDuration();
+            if (livingEntity.hasStatusEffect(FIRE_RESISTANCE)) {
+                remainingDuration = livingEntity.getStatusEffect(FIRE_RESISTANCE).getDuration();
                 hasFireResistance = true;
             }
 
-            if (!(((Entity) (Object) this) instanceof PlayerEntity) && hasFireResistance) {
+            if (!(livingEntity instanceof PlayerEntity) && hasFireResistance) {
                 this.fireTicks = 0;
                 return;
             }
@@ -63,12 +67,12 @@ public abstract class EntityMixin {
             * they are holding a bucket of milk (which can remove the fire resistance),
             * then don't extinguish the fire, as a warning.
              */
-            if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance
+            if (livingEntity.getFireTicks() > 0 && hasFireResistance
                     && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockState)
                                     -> blockState.isIn(BlockTags.FIRE) || blockState.isOf(Blocks.LAVA))
-                                    && (remainingDuration <= 200 || ((LivingEntity) (Object) this).isHolding(item -> item.isIn(CLEARS_EFFECTS)))
+                                    && (remainingDuration <= 200 || (livingEntity.isHolding(item -> item.isIn(CLEARS_EFFECTS)))
                         )
-            )
+            ))
             {
                 this.fireTicks = 0;
             }
