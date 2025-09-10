@@ -1,5 +1,6 @@
 package net.ellivers.whyamionfire.mixin;
 
+import net.ellivers.whyamionfire.WhyAmIOnFire;
 import net.ellivers.whyamionfire.config.ModConfig;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -16,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.ellivers.whyamionfire.WhyAmIOnFire.CLEARS_EFFECTS;
 import static net.minecraft.entity.effect.StatusEffects.FIRE_RESISTANCE;
 
 @Mixin(Entity.class)
@@ -26,6 +26,9 @@ public abstract class EntityMixin {
     @Shadow public abstract Box getBoundingBox();
 
     @Shadow private int fireTicks;
+
+    @Shadow
+    public abstract void extinguish();
 
     @Inject(method = "setFireTicks", at = @At("TAIL"))
     private void setFireTicks(int ticks, CallbackInfo ci) {
@@ -41,7 +44,7 @@ public abstract class EntityMixin {
     public void extinguishIfResistantToFire() {
         if (ModConfig.extinguishMobs && ((Entity) (Object) this) instanceof LivingEntity) {
             if (((Entity) (Object) this) instanceof PlayerEntity && ((PlayerEntity) (Object) this).isCreative()) {
-                this.fireTicks = 0;
+                this.extinguish();
                 return;
             }
 
@@ -53,7 +56,7 @@ public abstract class EntityMixin {
             }
 
             if (!(((Entity) (Object) this) instanceof PlayerEntity) && hasFireResistance) {
-                this.fireTicks = 0;
+                this.extinguish();
                 return;
             }
 
@@ -66,11 +69,11 @@ public abstract class EntityMixin {
             if (((Entity) (Object) this).getFireTicks() > 0 && hasFireResistance
                     && !(this.world.getStatesInBoxIfLoaded(this.getBoundingBox().contract(0.001D)).anyMatch((blockState)
                                     -> blockState.isIn(BlockTags.FIRE) || blockState.isOf(Blocks.LAVA))
-                                    && (remainingDuration <= 200 || ((LivingEntity) (Object) this).isHolding(item -> item.isIn(CLEARS_EFFECTS)))
+                                    && (remainingDuration <= 200 || ((LivingEntity) (Object) this).isHolding(WhyAmIOnFire::itemClearsEffects))
                         )
             )
             {
-                this.fireTicks = 0;
+                this.extinguish();
             }
 
         }
