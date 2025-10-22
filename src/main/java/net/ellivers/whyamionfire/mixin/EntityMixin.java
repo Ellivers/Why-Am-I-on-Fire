@@ -32,7 +32,7 @@ public abstract class EntityMixin {
 
     @Inject(method = "setFireTicks", at = @At("TAIL"))
     private void setFireTicks(int ticks, CallbackInfo ci) {
-        extinguishIfResistantToFire();
+        if (ticks > 0) extinguishIfResistantToFire();
     }
 
     @Inject(method = "baseTick", at = @At("TAIL"))
