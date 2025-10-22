@@ -9,7 +9,9 @@
     "Ellivers"
   ],
   "contact": {
-    "sources": "https://github.com/Ellivers/Why-Am-I-on-Fire"
+    "homepage": "https://modrinth.com/mod/why-am-i-on-fire",
+    "sources": "https://github.com/Ellivers/Why-Am-I-on-Fire",
+    "issues": "https://github.com/Ellivers/Why-Am-I-on-Fire/issues"
   },
 
   "license": "MIT",
@@ -29,6 +31,6 @@
   },
   "depends": {
     "fabricloader": ">=0.14.22",
-    "minecraft": ">=1.21.8"
+    "minecraft": "1.21.8"
   }
 }
