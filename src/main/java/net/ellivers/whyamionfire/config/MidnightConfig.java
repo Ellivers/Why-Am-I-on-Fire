@@ -6,11 +6,13 @@ import net.fabricmc.api.EnvType; import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient; import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element; import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen; import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tab.GridScreenTab; import net.minecraft.client.gui.tab.Tab; import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.tooltip.Tooltip; import net.minecraft.client.gui.widget.*;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenTexts;
@@ -30,7 +32,7 @@ import java.util.*;
 import java.util.function.BiFunction; import java.util.function.Function; import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+//import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
 
 /** MidnightConfig by Martin "Motschen" Prokoph
  *  Single class config library - feel free to copy!
@@ -311,11 +313,11 @@ public abstract class MidnightConfig {
                         if (entry.buttons.get(1) instanceof ButtonWidget button)
                             button.active = !Objects.equals(String.valueOf(entry.info.value), String.valueOf(entry.info.defaultValue)) && entry.info.conditionsMet;
                     }}}}
-        @Override
+        /*@Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
             if (this.tabNavigation.trySwitchTabsWithKey(keyCode)) return true;
             return super.keyPressed(keyCode, scanCode, modifiers);
-        }
+        }*/
         @Override
         public void close() {
             loadValuesFromJson(modid); cleanup();
@@ -430,7 +432,7 @@ public abstract class MidnightConfig {
                         }
                         List<ClickableWidget> widgets = Lists.newArrayList(widget, resetButton);
                         if (info.actionButton != null) {
-                            if (IS_SYSTEM_MAC) info.actionButton.active = false;
+                            //if (IS_SYSTEM_MAC) info.actionButton.active = false;
                             widget.setWidth(widget.getWidth() - 22); widget.setX(widget.getX() + 22);
                             widgets.add(info.actionButton);
                         } if (cycleButton != null) {
@@ -487,7 +489,8 @@ public abstract class MidnightConfig {
                 title.setMaxWidth(!buttons.isEmpty() ? buttons.get(buttons.size() > 2 ? buttons.size()-1 : 0).getX() - 16 : scaledWidth - 24);
             }
         }
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            int y = this.getContentY();
             buttons.forEach(b -> { b.setY(y); b.render(context, mouseX, mouseY, tickDelta);});
             if (title != null) {
                 title.setY(y+5);
@@ -501,10 +504,10 @@ public abstract class MidnightConfig {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(Click click, boolean doubled) {
             if (this.info != null && this.info.comment != null && !this.info.comment.url().isBlank())
                 ConfirmLinkScreen.open(MinecraftClient.getInstance().currentScreen, this.info.comment.url(), true);
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(click, doubled);
         }
 
         public List<? extends Element> children() {return Lists.newArrayList(buttons);}
